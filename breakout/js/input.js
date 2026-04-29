@@ -1,7 +1,10 @@
+import * as THREE from 'three';
 import { isGameOver, isPaused, setPaused, ball } from './state.js';
 import { movePaddle, launchBall } from './game.js';
-import { renderer } from './renderer.js';
-import { COLS, BRICK_WIDTH, GAP } from './constants.js';
+import { renderer, camera } from './renderer.js';
+
+const raycaster = new THREE.Raycaster();
+const pointer = new THREE.Vector2();
 
 // ─── Mouse / pointer tracking ─────────────────────────────────────
 export function initInput() {
@@ -9,9 +12,19 @@ export function initInput() {
 
   const onPointerMove = (e) => {
     const rect = renderer.domElement.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-    const worldX = x * ((COLS * (BRICK_WIDTH + GAP) - GAP) / 2 + 0.5);
-    movePaddle(worldX);
+    pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+    raycaster.setFromCamera(pointer, camera);
+
+    // Intersect ray with z=0 plane where the board sits
+    const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+    const intersect = new THREE.Vector3();
+    raycaster.ray.intersectPlane(plane, intersect);
+
+    if (intersect) {
+      movePaddle(intersect.x);
+    }
   };
 
   const onPointerDown = () => {
