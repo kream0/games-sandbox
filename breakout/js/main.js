@@ -1,5 +1,6 @@
 import {
   resetState, isGameOver, isPaused,
+  score, lives,
 } from './state.js';
 import {
   scene, camera, renderer,
@@ -58,8 +59,8 @@ function animate() {
       tick(dt);
       lastTick = now;
     }
-    sync();
   }
+  sync();  // always sync paddle/ball regardless of pause
 
   // Overlays
   if (isGameOver()) showGameOver(); else hideGameOver();
