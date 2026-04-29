@@ -1,7 +1,7 @@
 import {
   COLS, ROWS,
   BRICK_WIDTH, BRICK_HEIGHT, GAP,
-  PADDLE_WIDTH, BALL_RADIUS,
+  PADDLE_WIDTH, PADDLE_HEIGHT, BALL_RADIUS,
   BALL_SPEED, BALL_MAX_SPEED,
   ROW_SCORES,
 } from './constants.js';
@@ -73,6 +73,9 @@ export function tick(dt) {
   let vy = ball.vy;
   let bounced = false;
 
+  // Save previous ball Y for crossing detection
+  const prevBy = ball.y;
+
   // ─── Wall collisions ──────────────────────────────────────────
   if (bx - BALL_RADIUS < boundsL) {
     bx = boundsL + BALL_RADIUS;
@@ -92,12 +95,14 @@ export function tick(dt) {
 
   if (bounced) playWallBounce();
 
-  // ─── Paddle collision ─────────────────────────────────────────
+  // ─── Paddle collision (crossing detection) ────────────────
   const paddleY = -7.5;
   const halfP = PADDLE_WIDTH / 2;
-  if (vy < 0 && // ball moving down
-      by - BALL_RADIUS <= paddleY + PADDLE_WIDTH / 12 &&
-      by - BALL_RADIUS >= paddleY - PADDLE_WIDTH / 6 &&
+  const paddleSurface = paddleY + PADDLE_HEIGHT / 2;
+  // Detect crossing: ball was ABOVE paddle last frame AND is AT/BELOW it now
+  if (vy < 0 &&
+      prevBy - BALL_RADIUS >= paddleSurface &&
+      by  - BALL_RADIUS <= paddleSurface + BALL_SPEED * dt &&
       bx >= paddleX - halfP - BALL_RADIUS &&
       bx <= paddleX + halfP + BALL_RADIUS) {
     // Reflect with angle based on hit position
@@ -106,7 +111,7 @@ export function tick(dt) {
     const speed = Math.min(Math.sqrt(vx * vx + vy * vy) * 1.02, BALL_MAX_SPEED);
     vx = Math.cos(angle) * speed;
     vy = Math.sin(angle) * speed;
-    by = paddleY + BALL_RADIUS;
+    by = paddleSurface + BALL_RADIUS;
     playPaddleHit();
     triggerShake(0.05, 0.1);
   }
