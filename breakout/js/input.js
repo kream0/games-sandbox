@@ -1,10 +1,7 @@
-import * as THREE from 'three';
 import { isGameOver, isPaused, setPaused, ball } from './state.js';
 import { movePaddle, launchBall } from './game.js';
 import { renderer, camera } from './renderer.js';
-
-const raycaster = new THREE.Raycaster();
-const pointer = new THREE.Vector2();
+import { CAMERA_Z } from './constants.js';
 
 // ─── Mouse / pointer tracking ─────────────────────────────────────
 export function initInput() {
@@ -12,19 +9,18 @@ export function initInput() {
 
   const onPointerMove = (e) => {
     const rect = renderer.domElement.getBoundingClientRect();
-    pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-    pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+    // NDC x: -1 (left) to +1 (right)
+    const ndcX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
 
-    raycaster.setFromCamera(pointer, camera);
+    // Camera is at (0, 0, CAMERA_Z) looking at (0, 0, 0) with FOV.
+    // Compute the visible half-width at z = 0 (the board plane).
+    const halfFov = (camera.fov * Math.PI) / 360;
+    const halfVisHeight = Math.tan(halfFov) * CAMERA_Z;
+    const halfVisWidth = halfVisHeight * camera.aspect;
 
-    // Intersect ray with z=0 plane where the board sits
-    const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
-    const intersect = new THREE.Vector3();
-    raycaster.ray.intersectPlane(plane, intersect);
-
-    if (intersect) {
-      movePaddle(intersect.x);
-    }
+    // Map NDC to world X at the board plane
+    const worldX = ndcX * halfVisWidth;
+    movePaddle(worldX);
   };
 
   const onPointerDown = () => {
