@@ -2,12 +2,12 @@ import {
   resetState, isGameOver, isPaused,
 } from './state.js';
 import {
-  scene, camera, renderer, boardGroup,
+  scene, camera, renderer,
   onResize, sync, syncBricks,
   updateEffects, disposeEffects,
 } from './renderer.js';
 import {
-  startGame, tick,
+  tick,
 } from './game.js';
 import {
   updateScore, updateLives,

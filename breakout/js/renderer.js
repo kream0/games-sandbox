@@ -9,6 +9,7 @@ import {
   bricks,
   paddleX, ball,
 } from './state.js';
+import * as THREE from 'three';
 
 // ─── Scene ────────────────────────────────────────────────────────
 export const scene = new THREE.Scene();
@@ -84,7 +85,7 @@ const paddleMat = new THREE.MeshStandardMaterial({
   emissive: PADDLE_COLOR,
   emissiveIntensity: 0.2,
 });
-export const paddleMesh = new THREE.Mesh(paddleGeo, paddleMat);
+const paddleMesh = new THREE.Mesh(paddleGeo, paddleMat);
 paddleMesh.position.set(0, -7.5, 0);
 paddleMesh.castShadow = true;
 paddleMesh.receiveShadow = true;
@@ -99,7 +100,7 @@ const ballMat = new THREE.MeshStandardMaterial({
   emissive: BALL_COLOR,
   emissiveIntensity: 0.1,
 });
-export const ballMesh = new THREE.Mesh(ballGeo, ballMat);
+const ballMesh = new THREE.Mesh(ballGeo, ballMat);
 ballMesh.castShadow = true;
 boardGroup.add(ballMesh);
 
@@ -327,6 +328,18 @@ export function updateEffects(time) {
   updateParticles(dt);
   applyShake(dt);
   updateBgFlash(dt);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// RESIZE
+// ═══════════════════════════════════════════════════════════════════
+
+export function onResize() {
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  renderer.setSize(w, h);
 }
 
 // ═══════════════════════════════════════════════════════════════════

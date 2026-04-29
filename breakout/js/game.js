@@ -8,9 +8,9 @@ import {
 import {
   bricks, paddleX, ball,
   score, lives, combo,
-  setPaddleX, setBall, setCombo,
+  setPaddleX, setBall,
   setGameOver, isGameOver,
-  resetBall, initBricks, countBricks,
+  resetBall, initBricks,
 } from './state.js';
 import {
   sync, syncBricks,
