@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>3D Minesweeper - Three.js</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow: hidden;
+            background: #1a1a2e;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        #ui-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        #hud {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            padding: 10px 24px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            pointer-events: auto;
+            user-select: none;
+        }
+
+        #hud .stat {
+            color: #e0e0e0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        #hud .stat span {
+            color: #ffd700;
+        }
+
+        #hud .stat .num {
+            color: #fff;
+        }
+
+        #difficulty {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e0e0e0;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            padding: 5px 10px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Segoe UI', sans-serif;
+            cursor: pointer;
+            outline: none;
+        }
+
+        #difficulty:hover {
+            background: rgba(255, 255, 255, 0.18);
+        }
+
+        #difficulty option {
+            background: #1a1a2e;
+            color: #e0e0e0;
+        }
+
+        #restart-btn {
+            pointer-events: auto;
+            background: #e94560;
+            border: none;
+            color: #fff;
+            font-size: 20px;
+            font-weight: 700;
+            padding: 6px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        #restart-btn:hover {
+            background: #ff6b81;
+            transform: scale(1.05);
+        }
+
+        #message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.4s;
+            text-align: center;
+        }
+
+        #message.show {
+            opacity: 1;
+        }
+
+        #message.lose {
+            color: #e94560;
+        }
+
+        #message.win {
+            color: #ffd700;
+        }
+
+        #controls-hint {
+            position: absolute;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.25);
+            font-size: 13px;
+            pointer-events: none;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 6px 16px;
+            border-radius: 20px;
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="ui-overlay">
+        <div id="hud">
+            <div class="stat">💣 <span class="num" id="mine-count">0</span></div>
+            <div class="stat">⏱️ <span class="num" id="timer">0</span></div>
+            <select id="difficulty">
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+            </select>
+            <button id="restart-btn">↻</button>
+        </div>
+        <div id="message"></div>
+        <div id="controls-hint">
+            Left-click: reveal &middot; Right-click: flag &middot; Click number: chord &middot; Drag to rotate
+        </div>
+    </div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+
+    <script type="module" src="./js/main.js"></script>
+</body>
+
+</html>
